@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <rect width="1600" height="900" fill="#07181b"/>
+  <rect x="80" y="80" width="1440" height="740" rx="40" fill="#0b3a3f" stroke="#d4af37" stroke-width="4"/>
+  <circle cx="410" cy="350" r="180" fill="#122f36" stroke="#d4af37" stroke-width="3"/>
+  <path d="M365 225c55-60 135-82 212-64 60 12 112 46 155 98-35-18-62-29-102-34-38-5-84-4-120 13-48 23-92 69-112 131-24 74-18 144 10 201-31-84-41-170-22-245 14-56 31-79 62-100" fill="#0f2d32" stroke="#d4af37" stroke-width="3"/>
+  <path d="M680 250c98 22 186 87 233 179" stroke="#d4af37" stroke-width="5" fill="none"/>
+  <path d="M320 620c244-88 464-100 785-48" stroke="#d4af37" stroke-width="4" fill="none"/>
+  <text x="800" y="470" text-anchor="middle" font-family="Ma Shan Zheng, cursive" font-size="68" fill="#d4af37">沧浪门</text>
+  <text x="800" y="535" text-anchor="middle" font-family="Noto Serif SC, serif" font-size="28" fill="#f4e2b2">江湖同舟，剑意长存</text>
+</svg>

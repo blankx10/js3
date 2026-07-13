@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>个人主页 · 青岩万花综合大学</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+    <script>
+      tailwind = {
+        config: {
+          theme: {
+            extend: {
+              colors: {
+                ink: '#0b3a3f',
+                inkDeep: '#121212',
+                gold: '#d4af37'
+              },
+              fontFamily: {
+                display: ['Ma Shan Zheng', 'cursive'],
+                body: ['Noto Serif SC', 'serif']
+              }
+            }
+          }
+        }
+      };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body class="min-h-screen bg-[#07181b] text-slate-100 font-body">
+    <div class="site-shell">
+      <header class="sticky top-0 z-40 border-b border-gold/40 bg-[#07181b]/95 backdrop-blur">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-8">
+          <a href="index.html" class="flex items-center gap-3">
+            <div class="flex h-11 w-11 items-center justify-center rounded-full border border-gold/70 bg-ink text-lg font-display text-gold">山</div>
+            <div>
+              <p class="font-display text-xl text-gold">青岩万花综合大学</p>
+              <p class="text-xs uppercase tracking-[0.3em] text-slate-400">JX3 · 师门主页</p>
+            </div>
+          </a>
+          <nav class="hidden items-center gap-6 lg:flex">
+            <a class="nav-link" href="index.html">首页</a>
+            <a class="nav-link" href="pedigree.html">谱系图</a>
+            <a class="nav-link" href="gallery.html">相册</a>
+            <a class="nav-link" href="profile.html">个人主页</a>
+            <a class="nav-link" href="tools.html">实用工具</a>
+            <a class="nav-link" href="stats.html">团本统计</a>
+            <a class="nav-link" href="feed.html">动态墙</a>
+          </nav>
+          <div class="flex items-center gap-2 sm:gap-4">
+            <button class="rounded-full border border-gold/40 px-3 py-2 text-sm text-gold lg:hidden" data-nav-toggle>☰</button>
+          </div>
+        </div>
+        <div class="hidden border-t border-gold/20 bg-black/20 px-4 py-3 lg:hidden" data-mobile-nav>
+          <div class="flex flex-col gap-2">
+            <a class="nav-link" href="index.html">首页</a>
+            <a class="nav-link" href="pedigree.html">谱系图</a>
+            <a class="nav-link" href="gallery.html">相册</a>
+            <a class="nav-link" href="profile.html">个人主页</a>
+            <a class="nav-link" href="tools.html">实用工具</a>
+            <a class="nav-link" href="stats.html">团本统计</a>
+            <a class="nav-link" href="feed.html">动态墙</a>
+          </div>
+        </div>
+      </header>
+
+      <main id="top" class="mx-auto max-w-7xl px-4 py-8 lg:px-8">
+        <section class="paper-panel rounded-[24px] border border-gold/30 p-6">
+          <div class="grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
+            <div class="space-y-4">
+              <div id="profile-panel" class="rounded-[24px] border border-gold/20 bg-[#0c2b31] p-6"></div>
+              <form id="profile-form" class="rounded-[24px] border border-gold/20 bg-[#0c2b31] p-6">
+                <p class="font-display text-2xl text-gold">编辑我的资料</p>
+                <div class="mt-4 grid gap-3 md:grid-cols-2">
+                  <input id="profile-name" class="rounded-xl border border-gold/20 bg-[#07181b] px-3 py-2 text-slate-100" placeholder="姓名" />
+                  <input id="profile-title" class="rounded-xl border border-gold/20 bg-[#07181b] px-3 py-2 text-slate-100" placeholder="称号" />
+                  <input id="profile-type" class="rounded-xl border border-gold/20 bg-[#07181b] px-3 py-2 text-slate-100" placeholder="门派 / 心法" />
+                  <input id="profile-qq" class="rounded-xl border border-gold/20 bg-[#07181b] px-3 py-2 text-slate-100" placeholder="QQ 号" />
+                  <input id="profile-avatar" type="file" accept="image/*" class="rounded-xl border border-gold/20 bg-[#07181b] px-3 py-2 text-slate-100" />
+                  <textarea id="profile-description" class="md:col-span-2 min-h-[90px] rounded-xl border border-gold/20 bg-[#07181b] px-3 py-2 text-slate-100" placeholder="个人简介"></textarea>
+                </div>
+                <button class="mt-4 rounded-full bg-gold px-4 py-2 font-semibold text-ink">保存资料</button>
+              </form>
+            </div>
+            <div class="space-y-4">
+              <div class="rounded-[20px] border border-gold/20 bg-[#0c2b31] p-4">
+                <div class="flex gap-3 border-b border-gold/20 pb-3">
+                  <button class="tab-button active" data-tab="feed">个人动态</button>
+                  <button class="tab-button" data-tab="works">我的作品</button>
+                  <button class="tab-button" data-tab="history">团本历史</button>
+                </div>
+                <div class="mt-4">
+                  <div class="tab-panel active" data-panel="feed">
+                    <p class="text-slate-300">
+                  </div>
+                  <div class="tab-panel" data-panel="works">
+                    <ul class="list-disc space-y-2 pl-5 text-slate-300">
+                      <li></li>
+                    </ul>
+                  </div>
+                  <div class="tab-panel" data-panel="history">
+                    <ul class="list-disc space-y-2 pl-5 text-slate-300">
+                      
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="border-t border-gold/20 bg-[#07181b] px-4 py-8 text-sm text-slate-400">
+        <div class="mx-auto flex max-w-7xl flex-col gap-4 md:flex-row md:items-center md:justify-between lg:px-8">
+          <div>
+            <p class="font-display text-xl text-gold">青岩万花综合大学</p>
+            <p>创qq群于 2024 年 10 月 20 日 · 免责声明：内容仅作纪念与分享。</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+    <script src="js/app.js"></script>
+  </body>
+</html>

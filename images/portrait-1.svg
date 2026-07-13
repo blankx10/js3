@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+  <rect width="400" height="400" fill="#102b33"/>
+  <circle cx="200" cy="170" r="90" fill="#d4af37" fill-opacity="0.22" stroke="#d4af37" stroke-width="3"/>
+  <circle cx="200" cy="160" r="70" fill="#e7d6ab"/>
+  <rect x="110" y="230" width="180" height="110" rx="40" fill="#0b3a3f"/>
+  <text x="200" y="360" text-anchor="middle" font-family="Noto Serif SC, serif" font-size="24" fill="#d4af37">成员</text>
+</svg>

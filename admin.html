@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>成员编辑中心 · 青岩万花综合大学</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+    <script>
+      tailwind = {
+        config: {
+          theme: {
+            extend: {
+              colors: {
+                ink: '#0b3a3f',
+                inkDeep: '#121212',
+                gold: '#d4af37'
+              },
+              fontFamily: {
+                display: ['Ma Shan Zheng', 'cursive'],
+                body: ['Noto Serif SC', 'serif']
+              }
+            }
+          }
+        }
+      };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body class="min-h-screen bg-[#07181b] text-slate-100 font-body">
+    <div class="site-shell">
+      <header class="sticky top-0 z-40 border-b border-gold/40 bg-[#07181b]/95 backdrop-blur">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-8">
+          <a href="index.html" class="flex items-center gap-3">
+            <div class="flex h-11 w-11 items-center justify-center rounded-full border border-gold/70 bg-ink text-lg font-display text-gold">山</div>
+            <div>
+              <p class="font-display text-xl text-gold">青岩万花综合大学</p>
+              <p class="text-xs uppercase tracking-[0.3em] text-slate-400">成员编辑中心</p>
+            </div>
+          </a>
+        </div>
+      </header>
+
+      <main id="top" class="mx-auto max-w-7xl px-4 py-8 lg:px-8">
+        <section class="grid gap-6 lg:grid-cols-[260px_1fr]">
+          <aside class="rounded-[24px] border border-gold/30 bg-[#0c2b31] p-4">
+            <p class="font-display text-xl text-gold">公开编辑入口</p>
+            <div class="mt-4 space-y-2 text-sm text-slate-300">
+              <div class="rounded-xl bg-[#112c33] p-3">发布公告</div>
+              <div class="rounded-xl bg-[#112c33] p-3">更新成员资料</div>
+              <div class="rounded-xl bg-[#112c33] p-3">上传照片与记录</div>
+              <div class="rounded-xl bg-[#112c33] p-3">发布动态</div>
+              <div class="rounded-xl bg-[#112c33] p-3">填写团本记录</div>
+            </div>
+            <p class="mt-4 text-xs text-slate-400">每位成员都可以直接在页面内参与编辑，内容会保存到当前浏览器的本地存储。</p>
+          </aside>
+          <section class="space-y-6">
+            <div class="paper-panel rounded-[24px] border border-gold/30 p-6">
+              <p class="font-display text-2xl text-gold">公告管理</p>
+              <form id="announcement-form" class="mt-4 space-y-3">
+                <textarea id="announcement-input" class="min-h-[100px] w-full rounded-[16px] border border-gold/20 bg-[#0c2b31] p-3 text-slate-100" placeholder="输入公告，多条请换行"></textarea>
+                <button class="rounded-full bg-gold px-4 py-2 font-semibold text-ink">保存公告</button>
+              </form>
+              <div id="announcement-admin-list" class="mt-4 space-y-2"></div>
+            </div>
+
+            <div class="paper-panel rounded-[24px] border border-gold/30 p-6">
+              <p class="font-display text-2xl text-gold">成员管理</p>
+              <form id="member-form" class="mt-4 grid gap-4 md:grid-cols-2">
+                <input id="member-name" class="rounded-xl border border-gold/20 bg-[#0c2b31] px-3 py-2 text-slate-100" placeholder="成员名称" />
+                <input id="member-title" class="rounded-xl border border-gold/20 bg-[#0c2b31] px-3 py-2 text-slate-100" placeholder="称号/定位" />
+                <input id="member-type" class="rounded-xl border border-gold/20 bg-[#0c2b31] px-3 py-2 text-slate-100" placeholder="门派 / 心法" />
+                <input id="member-status" class="rounded-xl border border-gold/20 bg-[#0c2b31] px-3 py-2 text-slate-100" placeholder="在线状态" />
+                <input id="member-visits" class="rounded-xl border border-gold/20 bg-[#0c2b31] px-3 py-2 text-slate-100" placeholder="参团次数" />
+                <textarea id="member-description" class="md:col-span-2 min-h-[80px] rounded-xl border border-gold/20 bg-[#0c2b31] px-3 py-2 text-slate-100" placeholder="成员简介"></textarea>
+                <button class="md:col-span-2 rounded-full bg-gold px-4 py-2 font-semibold text-ink">新增成员</button>
+              </form>
+              <div id="member-admin-list" class="mt-4 space-y-2"></div>
+            </div>
+
+            <div class="paper-panel rounded-[24px] border border-gold/30 p-6">
+              <p class="font-display text-2xl text-gold">相册上传</p>
+              <form id="gallery-form" class="mt-4 grid gap-4 md:grid-cols-2">
+                <input id="gallery-title" class="rounded-xl border border-gold/20 bg-[#0c2b31] px-3 py-2 text-slate-100" placeholder="标题" />
+                <input id="gallery-tag" class="rounded-xl border border-gold/20 bg-[#0c2b31] px-3 py-2 text-slate-100" placeholder="标签（如 合照 / 日常）" />
+                <textarea id="gallery-description" class="md:col-span-2 min-h-[80px] rounded-xl border border-gold/20 bg-[#0c2b31] px-3 py-2 text-slate-100" placeholder="描述"></textarea>
+                <input id="gallery-image" type="file" accept="image/*" class="md:col-span-2 rounded-xl border border-gold/20 bg-[#0c2b31] px-3 py-2 text-slate-100" />
+                <button class="md:col-span-2 rounded-full bg-gold px-4 py-2 font-semibold text-ink">上传图片</button>
+              </form>
+              <div id="gallery-admin-list" class="mt-4 space-y-2"></div>
+            </div>
+
+            <div class="paper-panel rounded-[24px] border border-gold/30 p-6">
+              <p class="font-display text-2xl text-gold">动态发布</p>
+              <form id="post-form" class="mt-4 space-y-3">
+                <input id="post-author" class="w-full rounded-xl border border-gold/20 bg-[#0c2b31] px-3 py-2 text-slate-100" placeholder="发布人" />
+                <textarea id="post-content" class="min-h-[100px] w-full rounded-xl border border-gold/20 bg-[#0c2b31] px-3 py-2 text-slate-100" placeholder="动态内容"></textarea>
+                <input id="post-tag" class="w-full rounded-xl border border-gold/20 bg-[#0c2b31] px-3 py-2 text-slate-100" placeholder="标签" />
+                <button class="rounded-full bg-gold px-4 py-2 font-semibold text-ink">发布动态</button>
+              </form>
+              <div id="post-admin-list" class="mt-4 space-y-2"></div>
+            </div>
+
+            <div class="paper-panel rounded-[24px] border border-gold/30 p-6">
+              <p class="font-display text-2xl text-gold">团本录入</p>
+              <form id="stats-form" class="mt-4 grid gap-4 md:grid-cols-2">
+                <input id="stats-time" class="rounded-xl border border-gold/20 bg-[#0c2b31] px-3 py-2 text-slate-100" placeholder="时间" />
+                <input id="stats-name" class="rounded-xl border border-gold/20 bg-[#0c2b31] px-3 py-2 text-slate-100" placeholder="团本名称" />
+                <input id="stats-members" class="rounded-xl border border-gold/20 bg-[#0c2b31] px-3 py-2 text-slate-100" placeholder="参与成员" />
+                <input id="stats-status" class="rounded-xl border border-gold/20 bg-[#0c2b31] px-3 py-2 text-slate-100" placeholder="通关状态" />
+                <textarea id="stats-drop" class="md:col-span-2 min-h-[80px] rounded-xl border border-gold/20 bg-[#0c2b31] px-3 py-2 text-slate-100" placeholder="掉落记录 / 分红"></textarea>
+                <button class="md:col-span-2 rounded-full bg-gold px-4 py-2 font-semibold text-ink">提交录入</button>
+              </form>
+              <div id="stats-admin-list" class="mt-4 space-y-2"></div>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+    <script src="js/app.js"></script>
+  </body>
+</html>
