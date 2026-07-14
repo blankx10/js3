@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "title": "师门合照示例",
+    "tag": "合照",
+    "description": "初始模板，替换为你的国内 CDN 图片链接。",
+    "imgUrl": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80",
+    "type": "image",
+    "createAt": "2026-07-14T00:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "title": "团建日常示例",
+    "tag": "日常",
+    "description": "替换为你自己的图片外链即可。",
+    "imgUrl": "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80",
+    "type": "image",
+    "createAt": "2026-07-14T00:00:00.000Z"
+  }
+]

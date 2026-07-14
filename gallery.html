@@ -126,8 +126,30 @@
 
     <script>
       // ====================== 配置区 ======================
-      const IMGBB_API_KEY = "192974bd65ab64c5ab7e4630f31d450a";
-      const GALLERY_API_BASE = "https://jx3-gallery-api.3427587626.workers.dev"; //替换为你的D1 Worker地址
+      const GLOBAL_ALBUM_JSON_URL = 'https://cdn.jsdelivr.net/gh/blankx10/js3/global-album.json';
+      const UPLOAD_API_URL = 'https://your-domestic-upload-api.example.com/upload';
+      const MAX_FILE_SIZE = 2 * 1024 * 1024;
+      const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+      const FALLBACK_GALLERY = [
+        {
+          id: 1,
+          title: '师门合照示例',
+          tag: '合照',
+          description: '初始模板，替换为你的国内 CDN 图片链接。',
+          imgUrl: 'images/hero-banner.svg',
+          type: 'image',
+          createAt: '2026-07-14T00:00:00.000Z'
+        },
+        {
+          id: 2,
+          title: '团建日常示例',
+          tag: '日常',
+          description: '替换为你自己的图片外链即可。',
+          imgUrl: 'images/portrait-4.svg',
+          type: 'image',
+          createAt: '2026-07-14T00:00:00.000Z'
+        }
+      ];
       // ===================================================
 
       // 移动端导航
@@ -138,6 +160,7 @@
       });
 
       let galleryData = [];
+      let currentFilter = 'all';
       const galleryGrid = document.getElementById('gallery-grid');
       const galleryForm = document.getElementById('gallery-form');
       const uploadStatus = document.getElementById('upload-status');
@@ -148,43 +171,58 @@
       const modalInfo = document.querySelector('[data-modal-info]');
       const modalClose = document.querySelector('[data-modal-close]');
 
-      // 从D1接口加载全局相册
+      function setUploadStatus(message, isError = false) {
+        uploadStatus.textContent = message;
+        uploadStatus.className = `mt-2 text-sm ${isError ? 'text-red-400' : 'text-gold'}`;
+      }
+
       async function loadGallery() {
+        setUploadStatus('正在加载全局相册数据...', false);
         try {
-          const res = await fetch(`${GALLERY_API_BASE}/api/gallery`);
-          galleryData = await res.json();
-          renderGallery();
+          const res = await fetch(GLOBAL_ALBUM_JSON_URL, { cache: 'no-cache' });
+          if (!res.ok) throw new Error('远端 JSON 响应异常');
+          const data = await res.json();
+          if (!Array.isArray(data)) throw new Error('相册数据格式不正确');
+          galleryData = data;
+          renderGallery(currentFilter);
+          setUploadStatus('已加载全局相册数据。', false);
         } catch (err) {
           console.error('加载相册失败', err);
+          galleryData = FALLBACK_GALLERY;
+          renderGallery(currentFilter);
+          setUploadStatus('远端相册加载失败，已使用本地模板数据。', false);
         }
       }
 
-      // 渲染相册
       function renderGallery(filter = 'all') {
+        currentFilter = filter;
         galleryGrid.innerHTML = '';
-        const filtered = filter === 'all' 
-          ? galleryData 
-          : galleryData.filter(item => item.tag === filter);
+        const filtered = filter === 'all' ? galleryData : galleryData.filter((item) => item.tag === filter);
 
-        filtered.forEach(item => {
+        if (!filtered.length) {
+          galleryGrid.innerHTML = '<div class="rounded-2xl border border-gold/20 bg-[#0c2b31]/60 p-4 text-sm text-slate-300">暂无符合条件的照片。</div>';
+          return;
+        }
+
+        filtered.forEach((item) => {
           const card = document.createElement('div');
           card.className = 'break-inside-avoid rounded-2xl border border-gold/20 bg-[#0c2b31]/60 overflow-hidden';
+          const imageUrl = item.imgUrl || item.url || item.image || '';
+          const mediaHtml = item.type === 'video'
+            ? `<video src="${imageUrl}" class="w-full" controls></video>`
+            : `<img src="${imageUrl}" alt="${item.title}" class="w-full cursor-pointer" data-preview="${imageUrl}" data-type="${item.type || 'image'}" data-desc="${item.description || ''}" data-title="${item.title}">`;
           card.innerHTML = `
-            ${item.type === 'video' 
-              ? `<video src="${item.url}" class="w-full" controls></video>`
-              : `<img src="${item.url}" alt="${item.title}" class="w-full cursor-pointer" data-preview="${item.url}" data-type="${item.type}" data-desc="${item.description}" data-title="${item.title}">`
-            }
+            ${mediaHtml}
             <div class="p-3">
-              <h4 class="text-gold font-display text-lg">${item.title}</h4>
-              <p class="text-xs text-slate-400 mt-1">标签：${item.tag}</p>
-              <p class="text-sm text-slate-300 mt-2">${item.description || ''}</p>
+              <h4 class="font-display text-lg text-gold">${item.title}</h4>
+              <p class="mt-1 text-xs text-slate-400">标签：${item.tag}</p>
+              <p class="mt-2 text-sm text-slate-300">${item.description || ''}</p>
             </div>
           `;
           galleryGrid.appendChild(card);
         });
 
-        // 图片预览弹窗
-        document.querySelectorAll('[data-preview]').forEach(img => {
+        document.querySelectorAll('[data-preview]').forEach((img) => {
           img.addEventListener('click', () => {
             const url = img.dataset.preview;
             const type = img.dataset.type;
@@ -201,69 +239,94 @@
             }
             modalInfo.innerText = `${title} | ${desc}`;
             modal.classList.remove('hidden');
+            modal.classList.add('flex');
           });
         });
       }
 
-      // 关闭弹窗
       modalClose.addEventListener('click', () => {
         modal.classList.add('hidden');
+        modal.classList.remove('flex');
         modalVideo.pause();
       });
 
-      // 标签筛选
-      filterButtons.forEach(btn => {
+      filterButtons.forEach((btn) => {
         btn.addEventListener('click', () => {
-          filterButtons.forEach(b => b.classList.remove('active'));
+          filterButtons.forEach((item) => item.classList.remove('active'));
           btn.classList.add('active');
           renderGallery(btn.dataset.galleryFilter);
         });
       });
 
-      // ImgBB上传图片 + D1保存相册信息
-      galleryForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const title = document.getElementById('gallery-title').value;
-        const tag = document.getElementById('gallery-tag').value;
-        const description = document.getElementById('gallery-description').value;
-        const fileInput = document.getElementById('gallery-image');
-        const file = fileInput.files[0];
-        if (!file) return;
+      galleryForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
 
-        uploadStatus.textContent = '正在上传图片...';
-        uploadStatus.className = 'mt-2 text-sm text-gold';
+        const title = document.getElementById('gallery-title').value.trim();
+        const tag = document.getElementById('gallery-tag').value.trim();
+        const description = document.getElementById('gallery-description').value.trim();
+        const fileInput = document.getElementById('gallery-image');
+        const file = fileInput && fileInput.files && fileInput.files[0];
+
+        if (!file) {
+          setUploadStatus('请选择一张图片。', true);
+          return;
+        }
+
+        if (file.size > MAX_FILE_SIZE) {
+          setUploadStatus('图片大小超限，请压缩到 2MB 以内。', true);
+          return;
+        }
+
+        if (!ALLOWED_TYPES.includes(file.type)) {
+          setUploadStatus('只支持 jpg / png / webp 格式。', true);
+          return;
+        }
+
+        if (!UPLOAD_API_URL || UPLOAD_API_URL.includes('your-domestic-upload-api')) {
+          setUploadStatus('上传接口尚未配置，请先在 gallery.html 的配置区替换为你的国内中转接口地址。', true);
+          return;
+        }
+
+        setUploadStatus('正在上传图片到国内中转接口...', false);
 
         try {
-          // 1.上传图片到ImgBB
           const formData = new FormData();
-          formData.append('image', file);
-          const imgRes = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+          formData.append('file', file);
+          const response = await fetch(UPLOAD_API_URL, {
             method: 'POST',
             body: formData
           });
-          const imgResult = await imgRes.json();
-          if (!imgResult.success) throw new Error(imgResult.error.message || '图片上传失败');
-          const imgUrl = imgResult.data.url;
-          const type = file.type.startsWith('video') ? 'video' : 'image';
 
-          // 2.保存相册信息到全局D1数据库
-          await fetch(`${GALLERY_API_BASE}/api/gallery`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title, tag, description, imgUrl, type })
+          if (!response.ok) {
+            throw new Error(`上传接口返回 ${response.status}`);
+          }
+
+          const result = await response.json().catch(() => ({}));
+          const imgUrl = result.imgUrl || result.url || result.data?.url || result.data?.imgUrl || '';
+
+          if (!imgUrl) {
+            throw new Error('上传接口未返回图片地址');
+          }
+
+          galleryData.unshift({
+            id: Date.now(),
+            title: title || '新上传照片',
+            tag: tag || '日常',
+            description: description || '已通过国内上传接口生成图片链接。',
+            imgUrl,
+            type: 'image',
+            createAt: new Date().toISOString()
           });
 
-          uploadStatus.textContent = '上传成功，全局同步！';
+          renderGallery(currentFilter);
+          setUploadStatus('上传成功，图片链接已加入当前相册。请把这条记录同步到 global-album.json。', false);
           galleryForm.reset();
-          await loadGallery(); //重新拉取全局相册
         } catch (err) {
           console.error(err);
-          uploadStatus.textContent = '上传失败：' + err.message;
-          uploadStatus.className = 'mt-2 text-sm text-red-400';
+          setUploadStatus(`上传失败：${err.message}`, true);
         }
       });
 
-      // 初始化加载全局相册
       loadGallery();
     </script>
   </body>
