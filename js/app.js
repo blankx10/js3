@@ -11,36 +11,20 @@ const defaultState = {
     intro: '今天已守望 1 天，团本与江湖同在。'
   },
   rankList: [
-    '林听雨 | 玄晶 12 · 大铁 7',
-    '叶无尘 | 玄晶 10 · 大铁 5',
-    '苏浅川 | 玄晶 9 · 大铁 4'
+    
   ],
   announcements: [
-    '【置顶】本周四 20:00 统一开团，需提前报备。',
-    '【更新】新增宏库分类与配装攻略入口。',
-    '【通知】成员请于周日前提交团本照片与掉落记录。'
+    
   ],
   members: [
-    { id: 1, name: '林听雨', title: '执灯人', type: '天策', status: '在线', description: '守门与带团的核心人物', visits: 23, avatar: 'images/portrait-1.svg' },
-    { id: 2, name: '叶无尘', title: '师兄', type: '天策', status: '在线', description: '常驻主力输出，擅长把握节奏与时机。', visits: 19, avatar: 'images/portrait-2.svg' },
-    { id: 3, name: '苏浅川', title: '师姐', type: '纯阳', status: '忙碌', description: '守护队友与团本节奏，常年稳准狠。', visits: 21, avatar: 'images/portrait-3.svg' },
-    { id: 4, name: '顾长歌', title: '弟子', type: '藏剑', status: '在线', description: '擅长控场与机动，极少失手。', visits: 16, avatar: 'images/portrait-4.svg' }
-  ],
+    ],
   gallery: [
-    { id: 1, title: '团本合照', description: '周五夜战，队伍云集，欢声与笑语并行。', tag: '合照', image: 'images/hero-banner.svg' },
-    { id: 2, title: '团建日常', description: '茶话、夜谈与各式日常小趣闻。', tag: '日常', image: 'images/portrait-4.svg' },
-    { id: 3, title: '奇遇欧皇', description: '玄晶与大铁的盛宴，人人都是幸运的见证者。', tag: '欧皇', image: 'images/hero-banner-3.svg' },
-    { id: 4, title: '外观分享', description: '这套衣装，不仅是战力，也是江湖气息。', tag: '外观', image: 'images/portrait-1.svg' }
-  ],
+    ],
   posts: [
-    { id: 1, author: '林听雨', content: '本周清晨团建，大家顺利通关，真是令人心情愉悦！', time: '2 小时前', tag: '团建' },
-    { id: 2, author: '顾长歌', content: '分享一个新的宏组合，适合团本稳定输出。', time: '6 小时前', tag: '宏' }
-  ],
+    ],
   stats: [
-    { time: '2026-07-10', name: '三教试炼', members: '林听雨 / 叶无尘 / 苏浅川', status: '已通关', drop: '玄晶 8 · 分红 320' },
-    { time: '2026-07-07', name: '试炼副本', members: '顾长歌 / 闻笙 / 程砚秋', status: '已通关', drop: '大铁 2 · 分红 180' }
-  ],
-  summary: { totalRuns: 156, totalXuan: 284, totalTie: 67, clearRate: '91%' }
+   ],
+  summary: { totalRuns: 0, totalXuan: 0}
 };
 
 let appState = loadState();
@@ -99,7 +83,7 @@ function renderMembers() {
     treeContainer.innerHTML = `
       <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div class="tree-node rounded-2xl border border-gold/30 bg-[#102d33] p-4 text-center">
-          <p class="font-display text-xl text-gold">执灯人</p>
+          <p class="font-display text-xl text-gold"></p>
           <p class="mt-1 text-sm text-slate-300">${root.name}</p>
           <p class="text-xs text-slate-400">${root.type} / ${root.title} / ${root.visits}场</p>
         </div>
@@ -160,15 +144,7 @@ function renderFeed() {
   `).join('');
 }
 
-function renderStatsPage() {
-  const summaryContainer = document.getElementById('stats-summary');
-  if (summaryContainer) {
-    summaryContainer.innerHTML = `
-      <div class="rounded-[20px] border border-gold/20 bg-[#0c2b31] p-4"><p class="text-sm text-slate-400">本周开团</p><p class="mt-2 text-3xl font-semibold">${appState.summary.totalRuns}</p></div>
-      <div class="rounded-[20px] border border-gold/20 bg-[#0c2b31] p-4"><p class="text-sm text-slate-400">本周掉落</p><p class="mt-2 text-3xl font-semibold">${appState.summary.totalXuan}</p></div>
-      <div class="rounded-[20px] border border-gold/20 bg-[#0c2b31] p-4"><p class="text-sm text-slate-400">记忆分红</p><p class="mt-2 text-3xl font-semibold">${appState.summary.totalTie}</p></div>
-    `;
-  }
+
 
   const tableBody = document.getElementById('stats-table-body');
   if (tableBody) {
@@ -181,6 +157,15 @@ function renderStatsPage() {
         <td class="p-3">${row.drop}</td>
       </tr>
     `).join('');
+  }
+function renderStatsPage() {
+  const summaryContainer = document.getElementById('stats-summary');
+  if (summaryContainer) {
+    summaryContainer.innerHTML = `
+      <div class="rounded-[20px] border border-gold/20 bg-[#0c2b31] p-4"><p class="text-sm text-slate-400">本周开团</p><p class="mt-2 text-3xl font-semibold">${appState.summary.totalRuns}</p></div>
+      <div class="rounded-[20px] border border-gold/20 bg-[#0c2b31] p-4"><p class="text-sm text-slate-400">本周掉落</p><p class="mt-2 text-3xl font-semibold">${appState.summary.totalXuan}</p></div>
+      <div class="rounded-[20px] border border-gold/20 bg-[#0c2b31] p-4"><p class="text-sm text-slate-400">记忆分红</p><p class="mt-2 text-3xl font-semibold">${appState.summary.totalTie}</p></div>
+    `;
   }
 }
 
@@ -289,7 +274,7 @@ function bindAdminForms() {
         id: Date.now(),
         name: document.getElementById('member-name').value.trim(),
         title: document.getElementById('member-title').value.trim() || '新成员',
-        type: document.getElementById('member-type').value.trim() || '天策',
+        type: document.getElementById('member-type').value.trim() || '',
         status: document.getElementById('member-status').value.trim() || '在线',
         description: document.getElementById('member-description').value.trim() || '新加入师门',
         visits: Number(document.getElementById('member-visits').value) || 0,
