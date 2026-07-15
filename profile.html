@@ -3,19 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>个人主页 · 青岩万花综合大学</title>
+    <title>个人资料编辑 · 青岩万花综合大学</title>
+    <meta name="description" content="基于腾讯云 CloudBase Web SDK 的个人资料编辑页面，登录后通过 editProfile 云函数同步到 profile 集合。" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet" />
     <script>
-      tailwind = {
+      window.tailwind = {
         config: {
           theme: {
             extend: {
               colors: {
                 ink: '#0b3a3f',
                 inkDeep: '#121212',
-                gold: '#d4af37'
+                gold: '#d4af37',
+                mist: '#d8d1b8'
               },
               fontFamily: {
                 display: ['Ma Shan Zheng', 'cursive'],
@@ -67,60 +69,377 @@
       </header>
 
       <main id="top" class="mx-auto max-w-7xl px-4 py-8 lg:px-8">
-        <section class="paper-panel rounded-[24px] border border-gold/30 p-6">
-          <div class="grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
-            <div class="space-y-4">
-              <div id="profile-panel" class="rounded-[24px] border border-gold/20 bg-[#0c2b31] p-6"></div>
-              <form id="profile-form" class="rounded-[24px] border border-gold/20 bg-[#0c2b31] p-6">
-                <p class="font-display text-2xl text-gold">编辑我的资料</p>
-                <div class="mt-4 grid gap-3 md:grid-cols-2">
-                  <input id="profile-name" class="rounded-xl border border-gold/20 bg-[#07181b] px-3 py-2 text-slate-100" placeholder="姓名" />
-                  <input id="profile-title" class="rounded-xl border border-gold/20 bg-[#07181b] px-3 py-2 text-slate-100" placeholder="称号" />
-                  <input id="profile-type" class="rounded-xl border border-gold/20 bg-[#07181b] px-3 py-2 text-slate-100" placeholder="门派 / 心法" />
-                  <input id="profile-qq" class="rounded-xl border border-gold/20 bg-[#07181b] px-3 py-2 text-slate-100" placeholder="QQ 号" />
-                  <input id="profile-avatar" type="file" accept="image/*" class="rounded-xl border border-gold/20 bg-[#07181b] px-3 py-2 text-slate-100" />
-                  <textarea id="profile-description" class="md:col-span-2 min-h-[90px] rounded-xl border border-gold/20 bg-[#07181b] px-3 py-2 text-slate-100" placeholder="个人简介"></textarea>
-                </div>
-                <button class="mt-4 rounded-full bg-gold px-4 py-2 font-semibold text-ink">保存资料</button>
-              </form>
+        <section class="paper-panel overflow-hidden rounded-[32px] border border-gold/30 p-6">
+          <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+            <div class="max-w-2xl">
+              <p class="font-display text-3xl text-gold">个人资料编辑</p>
+              <p class="mt-3 text-slate-300">
+                登录后即可编辑当前用户的资料，并通过已部署的 <span class="text-gold">editProfile</span> 云函数提交到 CloudBase 的 <span class="text-gold">profile</span> 集合。
+              </p>
             </div>
-            <div class="space-y-4">
-              <div class="rounded-[20px] border border-gold/20 bg-[#0c2b31] p-4">
-                <div class="flex gap-3 border-b border-gold/20 pb-3">
-                  <button class="tab-button active" data-tab="feed">个人动态</button>
-                  <button class="tab-button" data-tab="works">我的作品</button>
-                  <button class="tab-button" data-tab="history">团本历史</button>
-                </div>
-                <div class="mt-4">
-                  <div class="tab-panel active" data-panel="feed">
-                    <p class="text-slate-300">
-                  </div>
-                  <div class="tab-panel" data-panel="works">
-                    <ul class="list-disc space-y-2 pl-5 text-slate-300">
-                      <li></li>
-                    </ul>
-                  </div>
-                  <div class="tab-panel" data-panel="history">
-                    <ul class="list-disc space-y-2 pl-5 text-slate-300">
-                      
-                    </ul>
-                  </div>
-                </div>
+            <div class="w-full max-w-sm rounded-[24px] border border-gold/20 bg-[#0c2b31] p-4 shadow-xl">
+              <div class="flex items-center justify-between">
+                <p class="font-semibold text-gold">登录状态</p>
+                <span id="login-badge" class="rounded-full border border-gold/30 px-2 py-1 text-xs text-slate-300">未登录</span>
               </div>
+              <form id="login-form" class="mt-4 space-y-3">
+                <input id="login-email" type="email" class="w-full rounded-xl border border-gold/20 bg-[#07181b] px-3 py-2 text-slate-100 outline-none" placeholder="邮箱" required />
+                <input id="login-password" type="password" class="w-full rounded-xl border border-gold/20 bg-[#07181b] px-3 py-2 text-slate-100 outline-none" placeholder="密码" required />
+                <button type="submit" class="w-full rounded-full bg-gold px-4 py-2 font-semibold text-ink transition hover:scale-[1.01]">邮箱密码登录</button>
+              </form>
+              <button id="logout-btn" type="button" class="mt-3 hidden w-full rounded-full border border-gold/30 px-4 py-2 text-sm text-gold">退出登录</button>
+              <div id="auth-note" class="mt-3 text-sm text-slate-400">请先填写 CloudBase 环境 ID 后再登录。</div>
             </div>
           </div>
         </section>
+
+        <section class="mt-6 grid gap-6 lg:grid-cols-[0.92fr_1.08fr]">
+          <div class="paper-panel rounded-[24px] border border-gold/30 p-6">
+            <div class="flex items-center gap-4">
+              <img id="avatar-preview" src="images/hero-banner.svg" alt="头像预览" class="h-20 w-20 rounded-full border border-gold/30 object-cover" />
+              <div>
+                <p id="preview-name" class="font-display text-2xl text-gold">尚未设置</p>
+                <p id="preview-role" class="mt-1 text-sm text-slate-300">请先登录后编辑</p>
+                <p id="preview-bio" class="mt-2 text-sm text-slate-400">简介将在这里实时预览。</p>
+              </div>
+            </div>
+            <div class="mt-5 rounded-[20px] border border-gold/20 bg-[#0c2b31] p-4">
+              <p class="text-sm font-semibold uppercase tracking-[0.3em] text-gold">当前信息</p>
+              <pre id="debug-log" class="mt-3 overflow-x-auto whitespace-pre-wrap text-xs leading-6 text-slate-300"></pre>
+            </div>
+          </div>
+
+          <form id="profile-form" class="paper-panel rounded-[24px] border border-gold/30 p-6">
+            <p class="font-display text-2xl text-gold">编辑资料</p>
+            <div class="mt-4 grid gap-4">
+              <label class="block">
+                <span class="mb-2 block text-sm text-slate-300">角色昵称</span>
+                <input id="field-name" class="w-full rounded-xl border border-gold/20 bg-[#07181b] px-3 py-2 text-slate-100 outline-none" placeholder="如：林听雨" required />
+              </label>
+              <label class="block">
+                <span class="mb-2 block text-sm text-slate-300">门派职位</span>
+                <input id="field-role" class="w-full rounded-xl border border-gold/20 bg-[#07181b] px-3 py-2 text-slate-100 outline-none" placeholder="如：执事 / 掌门 / 祭酒" required />
+              </label>
+              <label class="block">
+                <span class="mb-2 block text-sm text-slate-300">个人简介</span>
+                <textarea id="field-bio" rows="4" class="w-full rounded-xl border border-gold/20 bg-[#07181b] px-3 py-2 text-slate-100 outline-none" placeholder="请简要填写你的江湖经历、风格或近期动态"></textarea>
+              </label>
+              <label class="block">
+                <span class="mb-2 block text-sm text-slate-300">头像 URL</span>
+                <input id="field-avatarUrl" type="url" class="w-full rounded-xl border border-gold/20 bg-[#07181b] px-3 py-2 text-slate-100 outline-none" placeholder="https://example.com/avatar.jpg" />
+              </label>
+            </div>
+            <div class="mt-5 flex flex-wrap gap-3">
+              <button id="save-btn" type="submit" class="rounded-full bg-gold px-5 py-2 font-semibold text-ink transition hover:scale-[1.01]">提交修改</button>
+              <button id="load-btn" type="button" class="rounded-full border border-gold/30 px-5 py-2 text-sm text-gold">刷新资料</button>
+            </div>
+          </form>
+        </section>
       </main>
 
-      <footer class="border-t border-gold/20 bg-[#07181b] px-4 py-8 text-sm text-slate-400">
-        <div class="mx-auto flex max-w-7xl flex-col gap-4 md:flex-row md:items-center md:justify-between lg:px-8">
-          <div>
-            <p class="font-display text-xl text-gold">青岩万花综合大学</p>
-            <p>创qq群于 2024 年 10 月 20 日 · 免责声明：内容仅作纪念与分享。</p>
-          </div>
-        </div>
-      </footer>
+      <div id="toast" class="fixed bottom-6 right-6 z-50 hidden max-w-sm rounded-2xl border border-gold/30 bg-[#07181b]/95 px-4 py-3 text-sm shadow-2xl" aria-live="polite"></div>
     </div>
-    <script src="js/app.js"></script>
+
+    <script src="https://web.qcloud.com/cloudbase-js-sdk/1.7.12/cloudbase.js"></script>
+    <script>
+      // 这里的环境 ID 需要替换为你自己的 CloudBase 环境 ID。
+      const envId = "替换为你的CloudBase真实环境ID";
+
+      (function () {
+        const loginForm = document.getElementById('login-form');
+        const loginEmail = document.getElementById('login-email');
+        const loginPassword = document.getElementById('login-password');
+        const logoutBtn = document.getElementById('logout-btn');
+        const saveBtn = document.getElementById('save-btn');
+        const loadBtn = document.getElementById('load-btn');
+        const authNote = document.getElementById('auth-note');
+        const loginBadge = document.getElementById('login-badge');
+        const debugLog = document.getElementById('debug-log');
+        const toast = document.getElementById('toast');
+        const previewName = document.getElementById('preview-name');
+        const previewRole = document.getElementById('preview-role');
+        const previewBio = document.getElementById('preview-bio');
+        const avatarPreview = document.getElementById('avatar-preview');
+        const fieldName = document.getElementById('field-name');
+        const fieldRole = document.getElementById('field-role');
+        const fieldBio = document.getElementById('field-bio');
+        const fieldAvatarUrl = document.getElementById('field-avatarUrl');
+
+        let app = null;
+        let auth = null;
+        let currentUid = '';
+        let currentUser = null;
+        let pending = false;
+
+        function setBusy(isBusy) {
+          pending = isBusy;
+          const controls = [loginEmail, loginPassword, loginForm.querySelector('button[type="submit"]'), logoutBtn, saveBtn, loadBtn];
+          controls.forEach((control) => {
+            if (control) {
+              control.disabled = isBusy;
+              control.classList.toggle('opacity-60', isBusy);
+              control.classList.toggle('cursor-not-allowed', isBusy);
+            }
+          });
+        }
+
+        function showToast(message, type = 'info') {
+          toast.textContent = message;
+          toast.className = 'fixed bottom-6 right-6 z-50 max-w-sm rounded-2xl border px-4 py-3 text-sm shadow-2xl';
+          toast.classList.remove('hidden');
+          if (type === 'success') {
+            toast.classList.add('border-gold/40', 'bg-[#07181b]/95', 'text-gold');
+          } else if (type === 'error') {
+            toast.classList.add('border-red-500/40', 'bg-[#07181b]/95', 'text-red-300');
+          } else {
+            toast.classList.add('border-gold/20', 'bg-[#07181b]/95', 'text-slate-200');
+          }
+          clearTimeout(showToast._timer);
+          showToast._timer = window.setTimeout(() => {
+            toast.classList.add('hidden');
+          }, 3200);
+        }
+
+        function logDebug(message) {
+          const stamp = new Date().toLocaleTimeString('zh-CN');
+          debugLog.textContent = `[${stamp}] ${message}\n` + debugLog.textContent;
+        }
+
+        function setAuthSummary(statusText, isLogged) {
+          loginBadge.textContent = statusText;
+          loginBadge.className = `rounded-full border px-2 py-1 text-xs ${isLogged ? 'border-gold/40 text-gold' : 'border-gold/20 text-slate-300'}`;
+          if (isLogged) {
+            logoutBtn.classList.remove('hidden');
+          } else {
+            logoutBtn.classList.add('hidden');
+          }
+        }
+
+        function normalizeProfile(raw) {
+          if (!raw || typeof raw !== 'object') {
+            return {};
+          }
+          if (raw.profile && typeof raw.profile === 'object') {
+            return raw.profile;
+          }
+          return raw;
+        }
+
+        function applyProfileToForm(profile) {
+          fieldName.value = profile.name || '';
+          fieldRole.value = profile.role || '';
+          fieldBio.value = profile.bio || '';
+          fieldAvatarUrl.value = profile.avatarUrl || '';
+          previewName.textContent = profile.name || '尚未设置';
+          previewRole.textContent = profile.role || '请先登录后编辑';
+          previewBio.textContent = profile.bio || '简介将在这里实时预览。';
+          if (profile.avatarUrl) {
+            avatarPreview.src = profile.avatarUrl;
+          } else {
+            avatarPreview.src = 'images/hero-banner.svg';
+          }
+        }
+
+        function ensureEnvReady() {
+          if (!window.cloudbase) {
+            throw new Error('CloudBase SDK 未加载，请确认网络连接并刷新页面。');
+          }
+          if (!envId || envId === '替换为你的CloudBase真实环境ID') {
+            throw new Error('请先将页面顶部的 envId 配置为你的 CloudBase 环境 ID。');
+          }
+        }
+
+        function initCloudbase() {
+          ensureEnvReady();
+          app = window.cloudbase.init({ env: envId });
+          auth = app.auth();
+        }
+
+        async function readCurrentUser() {
+          try {
+            const userInfo = await auth.getUserInfo();
+            currentUser = userInfo || null;
+            currentUid = userInfo?.uid || userInfo?.id || userInfo?.userId || userInfo?.user_id || '';
+            return currentUser;
+          } catch (error) {
+            currentUser = null;
+            currentUid = '';
+            return null;
+          }
+        }
+
+        async function refreshLoginState() {
+          try {
+            initCloudbase();
+            const user = await readCurrentUser();
+            if (user && currentUid) {
+              authNote.textContent = `已登录 • uid: ${currentUid}`;
+              setAuthSummary('已登录', true);
+              logDebug(`已检测到登录用户，uid=${currentUid}`);
+              await loadProfile();
+            } else {
+              authNote.textContent = '尚未登录，请填写邮箱与密码进行登录。';
+              setAuthSummary('未登录', false);
+              logDebug('当前未登录');
+            }
+          } catch (error) {
+            authNote.textContent = error.message || '初始化 CloudBase 失败。';
+            setAuthSummary('未登录', false);
+            showToast(error.message || '初始化失败，请检查环境配置。', 'error');
+            logDebug(`初始化异常: ${error.message}`);
+          }
+        }
+
+        async function loadProfile() {
+          if (!currentUid) {
+            showToast('请先登录后再加载资料。', 'error');
+            return;
+          }
+          setBusy(true);
+          try {
+            const response = await app.callFunction({
+              name: 'editProfile',
+              data: {
+                action: 'get',
+                ownerUid: currentUid
+              }
+            });
+            const parsed = response && response.result !== undefined ? response.result : response;
+            const profile = normalizeProfile(parsed);
+            applyProfileToForm(profile);
+            if (profile.ownerUid || profile._id) {
+              logDebug(`成功读取资料，ownerUid=${profile.ownerUid || currentUid}`);
+              showToast('资料加载成功。', 'success');
+            } else {
+              logDebug('云函数返回空资料，表单已复位。');
+            }
+          } catch (error) {
+            console.error(error);
+            logDebug(`加载资料失败: ${error.message || error}`);
+            showToast(`读取资料失败：${error.message || '请确认 editProfile 云函数已部署。'}`, 'error');
+          } finally {
+            setBusy(false);
+          }
+        }
+
+        async function handleLogin(event) {
+          event.preventDefault();
+          const email = loginEmail.value.trim();
+          const password = loginPassword.value;
+
+          if (!email || !password) {
+            showToast('请输入邮箱和密码。', 'error');
+            return;
+          }
+
+          setBusy(true);
+          try {
+            initCloudbase();
+            const result = await auth.signInWithEmailAndPassword(email, password);
+            const user = await readCurrentUser();
+            if (!user || !currentUid) {
+              throw new Error('登录成功但未读取到有效 uid。');
+            }
+            authNote.textContent = `已登录 • uid: ${currentUid}`;
+            setAuthSummary('已登录', true);
+            showToast(`登录成功，uid: ${currentUid}`, 'success');
+            logDebug(`登录成功，uid=${currentUid}`);
+            await loadProfile();
+          } catch (error) {
+            console.error(error);
+            const message = error.message || String(error);
+            const friendly = message.includes('not found') || message.includes('invalid') || message.includes('password')
+              ? '登录失败：邮箱或密码不正确。'
+              : `登录失败：${message}`;
+            authNote.textContent = friendly;
+            setAuthSummary('未登录', false);
+            showToast(friendly, 'error');
+            logDebug(`登录失败: ${message}`);
+          } finally {
+            setBusy(false);
+          }
+        }
+
+        async function handleLogout() {
+          setBusy(true);
+          try {
+            await auth.signOut();
+            currentUser = null;
+            currentUid = '';
+            setAuthSummary('未登录', false);
+            authNote.textContent = '已退出登录。';
+            showToast('已退出登录。', 'success');
+            logDebug('已退出登录');
+          } catch (error) {
+            console.error(error);
+            showToast(`退出失败：${error.message || error}`, 'error');
+          } finally {
+            setBusy(false);
+          }
+        }
+
+        async function handleProfileSubmit(event) {
+          event.preventDefault();
+          if (!currentUid) {
+            showToast('请先登录后再提交修改。', 'error');
+            return;
+          }
+
+          const profile = {
+            ownerUid: currentUid,
+            name: fieldName.value.trim(),
+            role: fieldRole.value.trim(),
+            bio: fieldBio.value.trim(),
+            avatarUrl: fieldAvatarUrl.value.trim(),
+            createAt: new Date().toISOString()
+          };
+
+          if (!profile.name || !profile.role) {
+            showToast('角色昵称和门派职位不能为空。', 'error');
+            return;
+          }
+
+          setBusy(true);
+          try {
+            const response = await app.callFunction({
+              name: 'editProfile',
+              data: {
+                action: 'save',
+                ownerUid: currentUid,
+                profile
+              }
+            });
+            const parsed = response && response.result !== undefined ? response.result : response;
+            const message = parsed?.message || parsed?.msg || '资料已同步保存。';
+            const success = parsed?.success === true || parsed?.code === 0 || parsed?.code === '0' || parsed?.errCode === 0 || parsed?.errCode === '0';
+            if (!success) {
+              throw new Error(message || '云函数返回异常结果。');
+            }
+            applyProfileToForm(profile);
+            showToast(message, 'success');
+            logDebug(`已保存资料，ownerUid=${profile.ownerUid}`);
+          } catch (error) {
+            console.error(error);
+            const message = error.message || '云函数调用失败';
+            if (message.includes('permission') || message.includes('permission denied') || message.includes('ownerUid')) {
+              showToast('无权限修改：当前登录用户与 ownerUid 不匹配。', 'error');
+            } else {
+              showToast(`保存失败：${message}`, 'error');
+            }
+            logDebug(`保存失败: ${message}`);
+          } finally {
+            setBusy(false);
+          }
+        }
+
+        loginForm.addEventListener('submit', handleLogin);
+        logoutBtn.addEventListener('click', handleLogout);
+        document.getElementById('profile-form').addEventListener('submit', handleProfileSubmit);
+        loadBtn.addEventListener('click', loadProfile);
+
+        // 页面初始化后，尽量检查当前 CloudBase 登录态；若未登录则保持在登录表单状态。
+        refreshLoginState();
+      })();
+    </script>
   </body>
 </html>
